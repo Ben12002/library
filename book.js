@@ -23,14 +23,43 @@ function Book(title, author, pages, read) {
     }
 }
 
+Book.prototype.toggleRead = function () {
+    this.read = !this.read;
+}
+
 function makeBookCard(book) {
     let card = document.createElement("div");
+    let deleteButton = document.createElement("button");
+    let index = myLibrary.indexOf(book);
+    let readButton = document.createElement("input");
+
+    readButton.type = "checkbox";
+    readButton.id = "toggleRead";
+    readButton.name = "toggleRead";
+    readButton.value = "toggleRead";
+    readButton.addEventListener("click", (Event) => {
+        book.toggleRead();
+        displayBooks();
+    })
+
+    deleteButton.innerHTML = "Delete";
+    deleteButton.addEventListener("click", (Event) => {
+        myLibrary.splice(index, 1);
+        displayBooks();
+    });
+
     card.classList.add("card");
+    //card.setAttribute("data-index", index);
     card.textContent = book.info();
+    card.appendChild(deleteButton); // has to be put after textContent
+    card.appendChild(readButton);
     return card;
 }
 
+
+
 function displayBooks() {
+    books.innerHTML = '';
     myLibrary.forEach(book => {
         let bookCard = makeBookCard(book);
         books.appendChild(bookCard);
@@ -41,9 +70,9 @@ function addBookToLibrary(event){
     let newTitle = titleField.value;
     let newAuthor = authorField.value;
     let newPages = pagesField.value;
-    let newRead = readField.value;
+    let newRead = readField.checked;
     myLibrary.push(new Book(newTitle, newAuthor, newPages, newRead));
-    //location.reload(true); //this also empties myLibrary
+    displayBooks();
     event.preventDefault();
 }
 
